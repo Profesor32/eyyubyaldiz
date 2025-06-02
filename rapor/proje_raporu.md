@@ -84,12 +84,7 @@ Proje, GitHub platformunda public repository olarak yayınlanmıştır. Reposito
 - Ekran görüntüleri
 
 ## Domain Yayınlama
-Proje, Github.io üzerinden ücretsiz domain ve hosting hizmeti alınarak yayınlanmıştır. Yayınlama adımları:
-1. Domain seçimi ve kaydı
-2. Hosting hesabı oluşturma
-3. FTP bilgilerinin alınması
-4. FileZilla ile dosya yükleme
-5. DNS ayarlarının yapılandırılması
+Proje, Github.io üzerinden ücretsiz domain ve hosting hizmeti alınarak yayınlanmıştır.
 
 ## Karşılaşılan Zorluklar ve Çözümleri
 
