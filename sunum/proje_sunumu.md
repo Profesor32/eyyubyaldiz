@@ -85,6 +85,3 @@
 
 ## 7. Soru & Cevap
 
----
-
-*Not: Bu sunum dosyası, projenin canlı demo'su sırasında kullanılacak bir rehber niteliğindedir. Sunum sırasında web sitesi üzerinden örnekler gösterilecektir.* 
