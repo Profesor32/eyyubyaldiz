@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stok Detayları - YaldızStok</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body class="bg-dark text-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">YaldızStok</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-home me-2"></i> Ana Sayfa</a></li>
+                    <li class="nav-item"><a class="nav-link" href="products.html"><i class="fas fa-boxes me-2"></i> Ürünlerimiz</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html"><i class="fas fa-info-circle me-2"></i> Hakkımızda</a></li>
+                    <li class="nav-item"><a class="nav-link" href="services.html"><i class="fas fa-concierge-bell me-2"></i> Hizmetlerimiz</a></li>
+                    <li class="nav-item"><a class="nav-link" href="projects.html"><i class="fas fa-project-diagram me-2"></i> Projelerimiz</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html"><i class="fas fa-envelope me-2"></i> İletişim</a></li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <a href="cart.html" class="btn btn-outline-light me-2 position-relative">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+                    </a>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" id="userDropdown"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container py-5">
+        <div id="stockDetails"></div>
+        <div class="my-4 d-flex gap-2">
+            <a href="products.html" class="btn btn-outline-light"><i class="fas fa-arrow-left me-2"></i>Ürünlere Dön</a>
+            <a href="index.html" class="btn btn-outline-secondary">Ana Sayfa</a>
+        </div>
+        <div class="mt-5">
+            <h4 class="mb-3"><i class="fas fa-history me-2"></i>Stok Hareket Geçmişi</h4>
+            <div class="mb-3">
+                <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addStockModal"><i class="fas fa-plus me-2"></i>Stok Girişi/Çıkışı Ekle</button>
+            </div>
+            <div id="stockHistory"></div>
+        </div>
+    </div>
+    <!-- Stok Girişi/Çıkışı Modalı (Demo) -->
+    <div class="modal fade" id="addStockModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-secondary text-light">
+                <div class="modal-header">
+                    <h5 class="modal-title">Stok Hareketi Ekle</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="addStockForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="stockType" class="form-label">İşlem Türü</label>
+                            <select class="form-select" id="stockType" required>
+                                <option value="Giriş">Giriş (Stok Artışı)</option>
+                                <option value="Çıkış">Çıkış (Stok Azalışı)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label">Miktar</label>
+                            <input type="number" class="form-control" id="quantity" required min="1">
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Açıklama</label>
+                            <input type="text" class="form-control" id="description" placeholder="İsteğe bağlı">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <footer class="bg-black text-light py-3 text-center">
+        <span>&copy; 2025 YaldızStok. Tüm hakları saklıdır.</span>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/stock-details.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        updateUserMenu();
+        updateCartCount && updateCartCount();
+    });
+    </script>
+    <style>
+    #stockDetails .card {
+        border-radius: 18px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    }
+    #stockDetails .card-title {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+    #stockDetails .badge {
+        font-size: 1em;
+    }
+    #stockDetails .product-img {
+        max-height: 200px;
+        max-width: 100%;
+        object-fit: contain;
+        background: #222;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    #stockDetails .qty-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    #stockDetails .qty-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1.2rem;
+        border-radius: 50%;
+        border: none;
+        background: #444;
+        color: #fff;
+        transition: background 0.2s;
+    }
+    #stockDetails .qty-btn:hover {
+        background: #666;
+    }
+    </style>
+</body>
+</html> 

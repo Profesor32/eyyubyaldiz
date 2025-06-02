@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sepetim - YaldızStok</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-dark text-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">YaldızStok</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-home me-2"></i> Ana Sayfa</a></li>
+                    <li class="nav-item"><a class="nav-link" href="products.html"><i class="fas fa-boxes me-2"></i> Ürünlerimiz</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html"><i class="fas fa-info-circle me-2"></i> Hakkımızda</a></li>
+                    <li class="nav-item"><a class="nav-link" href="services.html"><i class="fas fa-concierge-bell me-2"></i> Hizmetlerimiz</a></li>
+                    <li class="nav-item"><a class="nav-link" href="projects.html"><i class="fas fa-project-diagram me-2"></i> Projelerimiz</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html"><i class="fas fa-envelope me-2"></i> İletişim</a></li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <a href="cart.html" class="btn btn-outline-light me-2 position-relative">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+                    </a>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" id="userDropdown"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container py-5">
+        <h1 class="mb-4 text-center">Sepetim</h1>
+        <div class="row justify-content-center">
+            <div class="col-lg-8" id="cartProductsCol">
+                <div id="cartProducts"></div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card bg-secondary text-light shadow mb-4 rounded-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Sepet Özeti</h5>
+                        <div class="mb-3">
+                            <label for="couponInput" class="form-label">Kupon Kodu <span class="text-dark ms-2 small">(Örnek: INDIRIM10)</span></label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="couponInput" placeholder="Kupon kodu girin">
+                                <button class="btn btn-outline-light" id="applyCouponBtn">Uygula</button>
+                            </div>
+                            <div id="couponMsg" class="form-text text-success"></div>
+                        </div>
+                        <p class="mb-2">Ara Toplam: <span id="cartSubtotal">0 TL</span></p>
+                        <p class="mb-2">KDV (%18): <span id="cartTax">0 TL</span></p>
+                        <p class="mb-2">Kargo: <span id="cartShipping">39 TL</span> <span id="shippingInfo" class="badge bg-info ms-2"></span></p>
+                        <p class="mb-2 text-success" id="cartDiscountRow" style="display:none;">İndirim: -<span id="cartDiscount">0 TL</span></p>
+                        <h5 class="mb-3">Toplam: <span id="cartTotal">0 TL</span></h5>
+                        <div class="mb-3">
+                            <label for="orderNote" class="form-label">Sipariş Notu</label>
+                            <textarea class="form-control" id="orderNote" rows="2" placeholder="Teslimat veya siparişinizle ilgili notunuz..."></textarea>
+                        </div>
+                        <button class="btn btn-success w-100 btn-lg fw-bold" id="checkoutBtn">Satın Al</button>
+                        <div class="mt-3 text-center text-light small"><i class="fas fa-lock me-2"></i>Tüm ödemeler 256-bit SSL ile korunur.</div>
+                    </div>
+                </div>
+                <a href="products.html" class="btn btn-outline-light w-100 mb-2">Alışverişe Devam Et</a>
+            </div>
+        </div>
+    </div>
+    <footer class="bg-black text-light py-3 text-center">
+        <span>&copy; 2025 YaldızStok. Tüm hakları saklıdır.</span>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+    let appliedCoupon = null;
+    function renderCart() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const cartProducts = document.getElementById('cartProducts');
+        const cartSubtotal = document.getElementById('cartSubtotal');
+        const cartTax = document.getElementById('cartTax');
+        const cartShipping = document.getElementById('cartShipping');
+        const cartTotal = document.getElementById('cartTotal');
+        const cartDiscount = document.getElementById('cartDiscount');
+        const cartDiscountRow = document.getElementById('cartDiscountRow');
+        const shippingInfo = document.getElementById('shippingInfo');
+        const cartCount = document.getElementById('cartCount');
+        if (cart.length === 0) {
+            cartProducts.innerHTML = `
+                <div class='text-center py-5'>
+                    <i class='fas fa-shopping-cart cart-empty-icon'></i>
+                    <h4 class='mb-3'>Sepetiniz şu anda boş</h4>
+                    <p class='mb-4 text-muted'>Alışverişe devam ederek dilediğiniz ürünü sepetinize ekleyebilirsiniz.</p>
+                    <a href='products.html' class='btn btn-primary btn-lg px-4'>Ürünlere Git</a>
+                </div>
+            `;
+            cartSubtotal.textContent = '0 TL';
+            cartTax.textContent = '0 TL';
+            cartShipping.textContent = '39 TL';
+            cartTotal.textContent = '0 TL';
+            cartDiscountRow.style.display = 'none';
+            shippingInfo.textContent = '';
+            if (cartCount) {
+                cartCount.textContent = '0';
+            }
+            return;
+        }
+        let subtotal = 0;
+        let totalQty = 0;
+        cartProducts.innerHTML = `
+            <div class='d-flex flex-wrap align-items-center mb-4'>
+                <span class='cart-summary-badge'><i class='fas fa-shopping-cart me-2'></i> ${cart.length} ürün</span>
+                <span class='cart-summary-badge'><i class='fas fa-boxes me-2'></i> ${cart.reduce((a, b) => a + b.quantity, 0)} adet</span>
+                <span class='cart-summary-badge'><i class='fas fa-coins me-2'></i> ${cart.reduce((a, b) => a + b.price * b.quantity, 0)} TL</span>
+            </div>
+            ` + cart.map(item => {
+            const itemTotal = item.price * item.quantity;
+            subtotal += itemTotal;
+            totalQty += item.quantity;
+            return `
+                <div class='card mb-3 bg-dark text-light shadow'>
+                    <div class='row g-0 align-items-center'>
+                        <div class='col-md-2 text-center'>
+                            <img src='${item.image || "https://via.placeholder.com/80x80?text=Ürün"}' class='img-fluid rounded' alt='${item.name}' style='max-height:80px;'>
+                        </div>
+                        <div class='col-md-4'>
+                            <h5 class='mb-1'><a href='stock-details.html?id=${item.id}' class='text-light text-decoration-underline'>${item.name}</a></h5>
+                            <p class='mb-0 text-muted'>${item.description ? item.description.substring(0, 50) + '...' : ''}</p>
+                        </div>
+                        <div class='col-md-2 text-center'>
+                            <div class='input-group input-group-sm justify-content-center'>
+                                <button class='btn btn-outline-light' onclick='updateCartQty(${item.id}, -1)' ${item.quantity <= 1 ? 'disabled' : ''}>-</button>
+                                <input type='text' class='form-control text-center bg-dark text-light' value='${item.quantity}' style='width:40px;' readonly>
+                                <button class='btn btn-outline-light' onclick='updateCartQty(${item.id}, 1)'>+</button>
+                            </div>
+                        </div>
+                        <div class='col-md-2 text-center'>
+                            <span class='fw-bold'>${item.price} TL</span><br>
+                            <small class='text-muted'>Birim Fiyat</small>
+                        </div>
+                        <div class='col-md-1 text-center'>
+                            <span class='fw-bold'>${itemTotal} TL</span><br>
+                            <small class='text-muted'>Toplam</small>
+                        </div>
+                        <div class='col-md-1 text-center'>
+                            <button class='btn btn-danger btn-sm' onclick='removeFromCart(${item.id})'><i class='fas fa-trash'></i></button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        const tax = Math.round(subtotal * 0.18);
+        let shipping = subtotal >= 500 ? 0 : 39;
+        let discount = 0;
+        if (appliedCoupon === 'INDIRIM10') {
+            discount = Math.round((subtotal + tax + shipping) * 0.10);
+            cartDiscount.textContent = discount + ' TL';
+            cartDiscountRow.style.display = '';
+        } else {
+            cartDiscountRow.style.display = 'none';
+        }
+        cartSubtotal.textContent = subtotal + ' TL';
+        cartTax.textContent = tax + ' TL';
+        cartShipping.textContent = shipping + ' TL';
+        cartTotal.textContent = (subtotal + tax + shipping - discount) + ' TL';
+        shippingInfo.textContent = subtotal >= 500 ? 'Ücretsiz kargo!' : '500 TL üzeri ücretsiz kargo.';
+        if (cartCount) {
+            cartCount.textContent = cart.reduce((a, b) => a + (b.quantity || 1), 0);
+        }
+    }
+    function updateCartQty(id, change) {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const idx = cart.findIndex(item => item.id === id);
+        if (idx !== -1) {
+            cart[idx].quantity += change;
+            if (cart[idx].quantity < 1) cart[idx].quantity = 1;
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+        }
+    }
+    function removeFromCart(id) {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cart = cart.filter(item => item.id !== id);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCart();
+    }
+    document.getElementById('checkoutBtn').onclick = function() {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
+            alert('Satın alma işlemi için lütfen giriş yapın!');
+            window.location.href = 'login.html';
+            return;
+        }
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        if (cart.length === 0) {
+            alert('Sepetiniz boş!');
+            return;
+        }
+        const note = document.getElementById('orderNote').value;
+        let orders = JSON.parse(localStorage.getItem('orders')) || [];
+        const sampleAddresses = [
+            "İstanbul, Kadıköy, Moda Mah. Bahar Sk. No:12 D:5",
+            "Ankara, Çankaya, Kızılay Mah. Atatürk Blv. No:45 D:3",
+            "İzmir, Bornova, Kazımdirik Mah. 123. Sk. No:8 D:2",
+            "Bursa, Nilüfer, Görükle Mah. Çamlıca Sk. No:7 D:1",
+            "Antalya, Muratpaşa, Lara Mah. Güneş Sk. No:20 D:4",
+            "Konya, Selçuklu, Yazır Mah. 321. Sk. No:10 D:6",
+            "Adana, Seyhan, Barajyolu Mah. Çiçek Sk. No:15 D:7",
+            "Samsun, Atakum, Mimar Sinan Mah. Deniz Sk. No:9 D:3"
+        ];
+        const randomAddress = sampleAddresses[Math.floor(Math.random() * sampleAddresses.length)];
+        const newOrder = {
+            id: Date.now(),
+            userId: currentUser.id,
+            orderNumber: Math.floor(100000 + Math.random() * 900000),
+            date: new Date().toLocaleString('tr-TR'),
+            items: cart,
+            total: cart.reduce((a, b) => a + (b.price * b.quantity), 0),
+            note: note,
+            status: 'Beklemede',
+            paymentType: 'Online',
+            shippingStatus: 'Hazırlanıyor',
+            address: randomAddress
+        };
+        orders.push(newOrder);
+        localStorage.setItem('orders', JSON.stringify(orders));
+        alert('Satın alma işlemi başarıyla tamamlandı!');
+        localStorage.removeItem('cart');
+        renderCart();
+    };
+    document.getElementById('applyCouponBtn').onclick = function() {
+        const code = document.getElementById('couponInput').value.trim().toUpperCase();
+        const msg = document.getElementById('couponMsg');
+        if (code === 'INDIRIM10') {
+            appliedCoupon = code;
+            msg.textContent = 'Kupon başarıyla uygulandı!';
+        } else if (code) {
+            appliedCoupon = null;
+            msg.textContent = 'Geçersiz kupon kodu.';
+        } else {
+            appliedCoupon = null;
+            msg.textContent = '';
+        }
+        renderCart();
+    };
+    document.addEventListener('DOMContentLoaded', function() {
+        updateUserMenu();
+    });
+    document.addEventListener('DOMContentLoaded', renderCart);
+    </script>
+    <style>
+    .cart-empty-icon {
+        font-size: 4rem;
+        color: #888;
+        margin-bottom: 1rem;
+    }
+    .cart-summary-badge {
+        font-size: 1.1rem;
+        font-weight: 600;
+        background: #222;
+        color: #fff;
+        border-radius: 1rem;
+        padding: 0.5rem 1.2rem;
+        margin-right: 0.5rem;
+    }
+    @media (max-width: 991px) {
+        .cart-summary-badge {
+            display: block;
+            margin: 0.5rem auto;
+        }
+    }
+    </style>
+</body>
+</html> 
