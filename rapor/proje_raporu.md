@@ -122,6 +122,3 @@ Proje, InfinityFree üzerinden ücretsiz domain ve hosting hizmeti alınarak yay
 4. Font Awesome (https://fontawesome.com)
 5. Google Fonts (https://fonts.google.com)
 
----
-
-*Not: Bu proje bir öğrenci ders projesidir ve eğitim amaçlı hazırlanmıştır.* 
